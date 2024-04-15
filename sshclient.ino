@@ -197,7 +197,7 @@ int readPortFromKeyboard() {
     return atoi(commandBuffer.c_str()); // Convert buffer to integer
 }
 
-ssh_session connect_ssh(const char *host, const char *user, int verbosity) {
+ssh_session connect_ssh(const char *host, const char *user, int ssh_port, int verbosity) {
     ssh_session session = ssh_new();
     if (session == NULL) {
         Serial.println("Failed to create SSH session");
@@ -206,6 +206,7 @@ ssh_session connect_ssh(const char *host, const char *user, int verbosity) {
 
     ssh_options_set(session, SSH_OPTIONS_HOST, host);
     ssh_options_set(session, SSH_OPTIONS_USER, user);
+    ssh_options_set(session, SSH_OPTIONS_PORT, &ssh_port);
     ssh_options_set(session, SSH_OPTIONS_LOG_VERBOSITY, &verbosity);
 
     if (ssh_connect(session) != SSH_OK) {
