@@ -25,6 +25,7 @@ const char* password = "";
 const char* ssh_host = "";
 const char* ssh_user = "";
 const char* ssh_password = "";
+const int ssh_port = 22; 
 
 // M5Cardputer setup
 M5Canvas canvas(&M5Cardputer.Display);
@@ -90,6 +91,9 @@ void setup() {
     M5Cardputer.Display.print("\nHost: ");
     readInputFromKeyboard(ssh_host);
 
+    M5Cardputer.Display.print("\nPort: ");
+    int ssh_port = readPortFromKeyboard(); // This will be a new function or an adaptation.
+    
     M5Cardputer.Display.print("\nUsername: ");
     readInputFromKeyboard(ssh_user);
 
@@ -165,6 +169,32 @@ void readInputFromKeyboard(const char*& inputVariable) {
     inputBuffer[commandBuffer.length()] = '\0'; // Add null terminator
     inputVariable = inputBuffer;
     commandBuffer = "";
+}
+
+int readPortFromKeyboard() {
+    commandBuffer = "";
+    bool inputComplete = false;
+    while (!inputComplete) {
+        M5Cardputer.update();
+        // Include existing keyboard input logic here, adapted for integer input.
+        if (M5Cardputer.Keyboard.isChange() && M5Cardputer.Keyboard.isPressed()) {
+            Keyboard_Class::KeysState status = M5Cardputer.Keyboard.keysState();
+            for (auto i : status.word) {
+                if (isdigit(i)) { // Ensure input is a digit
+                    commandBuffer += i;
+                    M5Cardputer.Display.print(i); // Display the character as it's typed
+                }
+            }
+            if (status.del && commandBuffer.length() > 0) {
+                // Handle backspace logic
+            }
+            if (status.enter) {
+                inputComplete = true;
+            }
+        }
+        // Handle cursor position and scrolling logic
+    }
+    return atoi(commandBuffer.c_str()); // Convert buffer to integer
 }
 
 ssh_session connect_ssh(const char *host, const char *user, int verbosity) {
